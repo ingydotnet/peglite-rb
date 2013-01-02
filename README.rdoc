@@ -1,0 +1,38 @@
+= PegLite - Simple PEG Parsing Framework
+
+PegLite is a very easy way to make a PEG parser by simply writing a PegLite
+subclass and a few regexes.
+
+= Synopsis
+
+    require 'peglite'
+    class MyParser < PegLite
+      def top
+        match rule "( comment | assignment )*"
+      end
+      token comment: /\s*#.*\s*\n/
+      def assignment
+        m = match "id WS* EQUAL WS* value WS* EOL"
+        return { 'var' => m[0], 'value' => m[1] }
+      end
+    end
+
+    puts YAML.dump MyParser.new.parse <<'...'
+    # This is a comment. Below is an assignment statement:
+    foo = 123
+
+    # A string assignment:
+    bar = 'O HAI'
+    ...
+
+The above program, defines a parser, uses it to parse a text into a data tree,
+and then prints the tree in YAML:
+
+    - var: foo
+      value: 123
+    - var: bar
+      value: O HAI
+
+Pretty simple, right?
+
+
