@@ -74,12 +74,12 @@ end
 # This class defines a complete address parser using PegLite
 class AddressParser < PegLite
   rule address: "name street place"
-  rule name: (/(.*?)\n/)
-  rule street: (/(.*?)\n/)
+  rule name: /(.*?)\n/
+  rule street: /(.*?)\n/
   rule place: "city COMMA _ state __ zip NL"
-  rule city: (/(\w+(?: \w+)?)/)
-  rule state: (/(WA|OR|CA)/)  # Left Coast Rulez
-  rule zip: (/(\d{5})/)
+  rule city: /(\w+(?: \w+)?)/
+  rule state: /(WA|OR|CA)/ # Left Coast Rulez
+  rule zip: /(\d{5})/
 end
 
 # Extend AddressParser
