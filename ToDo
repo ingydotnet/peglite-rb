@@ -1,2 +1,13 @@
+- Define all Pegex atoms
+- Make better error msgs
+  - Add a rule-stack line
+  - Add error syntax
+- Deal with toprule global
+  - Work with inheritance
+    - Maybe toprule method
+
+
 + Add \A automatically
 + Add accessor for @input
+
+

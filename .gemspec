@@ -2,7 +2,7 @@
 
 GemSpec = Gem::Specification.new do |gem|
   gem.name = 'peglite'
-  gem.version = '0.0.2'
+  gem.version = '0.0.3'
   gem.license = 'MIT'
   gem.required_ruby_version = '>= 1.9.1'
 

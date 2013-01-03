@@ -7,7 +7,7 @@ require 'yaml'; def YYY *args; args.each \
 
 #------------------------------------------------------------------------------
 class PegLite
-  VERSION = '0.0.2'
+  VERSION = '0.0.3'
 
   def self.rule args
     name, rule = args.first
@@ -34,8 +34,13 @@ class PegLite
   # TODO define all the Pegex Atoms here
   rule _: (/\s*/)
   rule __: (/\s+/)
+  rule LCURLY: (/\{/)
+  rule RCURLY: (/\}/)
+  rule LSQUARE: (/\[/)
+  rule RSQUARE: (/\]/)
   rule EQUAL: (/=/)
   rule COMMA: (/,/)
+  rule COLON: (/:/)
   rule PLUS: (/\+/)
   rule NL: (/\n/)
   rule EOL: (/\r?\n/)

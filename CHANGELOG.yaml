@@ -1,3 +1,7 @@
+- version: 0.0.3
+  date:    
+  changes:
+  - rule() now defines first class methods
 - version: 0.0.2
   date:    Wed Jan  2 18:05:30 PST 2013
   changes:
