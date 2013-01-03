@@ -1,3 +1,9 @@
+- version: 0.0.2
+  date:    Wed Jan  2 18:05:30 PST 2013
+  changes:
+  - Add examples
+  - Add \A to regexes automatically
+  - Test an extended grammar
 - version: 0.0.1
   date:    Wed Jan  2 14:51:35 PST 2013
   changes: Ported from Pegex.pm CPAN module.

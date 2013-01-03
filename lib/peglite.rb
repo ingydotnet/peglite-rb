@@ -7,17 +7,18 @@ require 'yaml'; def YYY *args; args.each \
 
 #------------------------------------------------------------------------------
 class PegLite
-  $PegLiteRules = {}         # XXX global variable smell
+  VERSION = '0.0.2'
+
+  $PegLiteRules = {}         # TODO get rid of global variable smell
   def self.rule args
     name, rule = args.first
     name = name.to_s
     $PegLiteTopRule ||= name
     if rule.kind_of? Regexp
-      fail "Regexp for '#{name}' must begin with '\\A'" \
-        unless rule.to_s.match /\A\(\?-mix:\\A/
+      regex = Regexp.new(rule.to_s.sub(/:/, ':\\A'))
       $PegLiteRules[name] = {
         'type' => 'rgx',
-        'rule' => rule,
+        'rule' => regex,
         'min' => 1,
         'max' => 1,
       }
@@ -28,20 +29,25 @@ class PegLite
     end
   end
 
-  rule _: (/\A\s*/)
-  rule __: (/\A\s+/)
-  rule EQUAL: (/\A=/)
-  rule COMMA: (/\A,/)
-  rule NL: (/\A\n/)
+  # TODO define all the Pegex Atoms here
+  rule _: (/\s*/)
+  rule __: (/\s+/)
+  rule EQUAL: (/=/)
+  rule COMMA: (/,/)
+  rule PLUS: (/\+/)
+  rule NL: (/\n/)
+  rule EOL: (/\r?\n/)
   $PegLiteTopRule = nil
 
   attr_accessor :got
   attr_accessor :wrap
   attr_accessor :debug
+  attr_accessor :input
   def initialize attrs={}
     @got = nil
     @wrap = false
     @debug = false
+    @input = nil
 
     attrs.each { |k,v| self.send "#{k}=", v }
 
@@ -51,7 +57,7 @@ class PegLite
     yield self if block_given?
   end
 
-  def parse input, top=($PegLiteTopRule || 'top')
+  def parse input=@input, top=($PegLiteTopRule || 'top')
     fail "PegLite parse() method requires an input string" \
       unless input.kind_of? String
     @input = input
