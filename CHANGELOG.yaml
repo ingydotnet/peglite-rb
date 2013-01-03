@@ -1,7 +1,8 @@
 - version: 0.0.3
-  date:    
+  date:    Thu Jan  3 00:00:25 PST 2013
   changes:
   - rule() now defines first class methods
+  - start a json.rb example
 - version: 0.0.2
   date:    Wed Jan  2 18:05:30 PST 2013
   changes:
