@@ -9,23 +9,25 @@ require 'yaml'; def YYY *args; args.each \
 class PegLite
   VERSION = '0.0.2'
 
-  $PegLiteRules = {}         # TODO get rid of global variable smell
   def self.rule args
     name, rule = args.first
     name = name.to_s
     $PegLiteTopRule ||= name
     if rule.kind_of? Regexp
       regex = Regexp.new(rule.to_s.sub(/:/, ':\\A'))
-      $PegLiteRules[name] = {
+      rule = {
         'type' => 'rgx',
         'rule' => regex,
         'min' => 1,
         'max' => 1,
       }
     elsif rule.kind_of? String
-      $PegLiteRules[name] = PegLite::Compiler.new(rule).compile
+      rule = PegLite::Compiler.new(rule).compile
     else
       fail "Don't know how to make rule '#{name}' from '#{rule}'"
+    end
+    self.send :define_method, "rule_#{name}" do
+      match rule
     end
   end
 
@@ -53,7 +55,6 @@ class PegLite
 
     @pos = 0
     @far = 0
-    @rules = $PegLiteRules
     yield self if block_given?
   end
 
@@ -69,12 +70,9 @@ class PegLite
   def match rule=nil
     if not rule.kind_of? Hash
       rule ||= caller.first.scan(/(\w+)/).last.first
-      rule_name = rule
-      if rule.kind_of? String
-        rule = @rules[rule]
-      end
-      fail "Can't find rule for '#{rule_name}'" \
-        if not(rule and rule.kind_of? Hash)
+      method_name = "rule_#{rule}"
+      return send method_name if respond_to? method_name
+      fail "Can't find rule for '#{rule}'"
     end
 
     pos, count, matched, type, child, min, max =
@@ -128,15 +126,9 @@ class PegLite
   # TODO move trace/debug out of default match_ref method
   def match_ref ref
     trace "Try #{ref}" if @debug
-    begin
-      m = self.method(ref).call
-    rescue NameError => e
-      if @rules[ref]
-        m = match @rules[ref]
-      else
-        fail "No rule defined for '#{ref}'"
-      end
-    end
+    method = [ ref, "rule_#{ref}" ].find{|e| respond_to? e}
+    fail "No rule defined for '#{ref}'" unless method
+    m = send method
     if m
       m = (@wrap and not m.empty?) ? [{ref => m}] : m
       trace "Got #{ref}" if @debug
