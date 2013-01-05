@@ -105,16 +105,16 @@ class PegLite::Compiler
     end
   end
 
+  PATTERNS = [
+    /\A\s+/,
+    /\A(\()/,
+    /\A(\w+[\?\*\+]?)/,
+    /\A(\|)/,
+    /\A(\)[\?\*\+]?)/,
+  ]
   def get_token input
     return if input.empty?
-    patterns = [
-      /\A\s+/,
-      /\A(\()/,
-      /\A(\w+[\?\*\+]?)/,
-      /\A(\|)/,
-      /\A(\)[\?\*\+]?)/,
-    ]
-    patterns.each do |r|
+    PATTERNS.each do |r|
       if m = input.match(r)
         input.sub! r, ''
         return m.captures
